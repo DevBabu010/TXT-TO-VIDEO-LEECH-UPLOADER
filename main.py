@@ -1,4 +1,6 @@
-
+# Don't Remove Credit Tg - https://t.me/roxybasicneedbot1
+# Subscribe YouTube Channel For Amazing Bot https://youtube.com/@roxybasicneedbot
+# Ask Doubt on telegram https://t.me/roxybasicneedbot1
 
 import os
 import re
@@ -6,8 +8,8 @@ import sys
 import json
 import time
 import asyncio
+import requests
 import subprocess
-import requests, os, concurrent.futures 
 
 import core as helper
 from utils import progress_bar
@@ -32,6 +34,7 @@ bot = Client(
 
 # Welcome image file path
 WELCOME_IMAGE_PATH = "welcome.jpg"
+
 
 async def fast_m3u8_download(url, output_name):
     
@@ -70,7 +73,6 @@ async def fast_m3u8_download(url, output_name):
                 v.write(f.read())
 
     return output_name
-
 
 # Force Subscribe Check Function
 async def is_subscribed(bot, user_id):
@@ -249,7 +251,7 @@ async def upload(bot: Client, m: Message):
     raw_text0 = input1.text
     await input1.delete(True)
     
-    await editable.edit("🎬 **Select video quality:**\n\n360, 480, 720, 1080, 4k")
+    await editable.edit("🎬 **Select video quality:**\n\n144, 240, 360, 480, 720, 1080")
     input2: Message = await bot.listen(editable.chat.id)
     raw_text2 = input2.text
     await input2.delete(True)
@@ -319,6 +321,7 @@ async def upload(bot: Client, m: Message):
                 name1 = re.sub(r'[<>:"/\\|?*]', '', title)[:50]
                 name = f'{str(count).zfill(3)}) {name1}'
 
+                # Determine download strategy
                 cc = f'**📹 Video #{str(count).zfill(3)}**\n**📁 Title:** {name1}\n**📦 Batch:** {raw_text0}\n{MR}'
                 cc1 = f'**📄 Document #{str(count).zfill(3)}**\n**📁 Title:** {name1}\n**📦 Batch:** {raw_text0}\n{MR}'
                 
@@ -326,10 +329,10 @@ async def upload(bot: Client, m: Message):
                 prog = await m.reply_text(
                     f"⬇️ **Downloading...**\n\n"
                     f"📁 **Name:** `{name1}`\n"
-                    f"🔗 **URL:** `{url[:99]}...`\n"
+                    f"🔗 **URL:** `{url[:50]}...`\n"
                     f"📊 **Progress:** {count}/{len(links)}"
+                )
 
-                # Determine download strategy
                 if "youtu" in url:
                     ytf = f"b[height<={raw_text2}][ext=mp4]/bv[height<={raw_text2}][ext=mp4]+ba[ext=m4a]/b[ext=mp4]"
                     cmd = f'yt-dlp -f "{ytf}" "{url}" -o "{name}.%(ext)s"'
@@ -342,18 +345,9 @@ async def upload(bot: Client, m: Message):
                     successful_downloads += 1
                     continue
                 else:
-                    cmd = f'yt-dlp -f "best" "{url}" -o "{name}.%(ext)s"'
+                    cmd = f'yt-dlp -f "best" "{url}" -o "{name}.%(ext)s"'                       
 
-                cc = f'**📹 Video #{str(count).zfill(3)}**\n**📁 Title:** {name1}\n**📦 Batch:** {raw_text0}\n{MR}'
-                cc1 = f'**📄 Document #{str(count).zfill(3)}**\n**📁 Title:** {name1}\n**📦 Batch:** {raw_text0}\n{MR}'
                 
-                # Show download progress
-                prog = await m.reply_text(
-                    f"⬇️ **Downloading...**\n\n"
-                    f"📁 **Name:** `{name1}`\n"
-                    f"🔗 **URL:** `{url[:99]}...`\n"
-                    f"📊 **Progress:** {count}/{len(links)}"
-                )
                 
                 try:
                     if "drive.google.com" in url:
