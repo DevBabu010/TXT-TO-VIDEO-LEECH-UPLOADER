@@ -1,6 +1,4 @@
-# Don't Remove Credit Tg - https://t.me/roxybasicneedbot1
-# Subscribe YouTube Channel For Amazing Bot https://youtube.com/@roxybasicneedbot
-# Ask Doubt on telegram https://t.me/roxybasicneedbot1
+
 
 import os
 import re
@@ -320,6 +318,16 @@ async def upload(bot: Client, m: Message):
                 
                 name1 = re.sub(r'[<>:"/\\|?*]', '', title)[:50]
                 name = f'{str(count).zfill(3)}) {name1}'
+
+                cc = f'**📹 Video #{str(count).zfill(3)}**\n**📁 Title:** {name1}\n**📦 Batch:** {raw_text0}\n{MR}'
+                cc1 = f'**📄 Document #{str(count).zfill(3)}**\n**📁 Title:** {name1}\n**📦 Batch:** {raw_text0}\n{MR}'
+                
+                # Show download progress
+                prog = await m.reply_text(
+                    f"⬇️ **Downloading...**\n\n"
+                    f"📁 **Name:** `{name1}`\n"
+                    f"🔗 **URL:** `{url[:99]}...`\n"
+                    f"📊 **Progress:** {count}/{len(links)}"
 
                 # Determine download strategy
                 if "youtu" in url:
