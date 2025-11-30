@@ -8,7 +8,7 @@ import sys
 import json
 import time
 import asyncio
-import requests, os, concurrent.futures
+import requests
 import subprocess
 
 import core as helper
@@ -34,45 +34,6 @@ bot = Client(
 
 # Welcome image file path
 WELCOME_IMAGE_PATH = "welcome.jpg"
-
-
-async def fast_m3u8_download(url, output_name):
-    
-
-    print("⚡ Using Fast M3U8 Downloader...")
-
-    # Download playlist (.m3u8)
-    playlist_text = requests.get(url).text
-    base = url.rsplit("/", 1)[0]
-
-    segments = [
-        f"{base}/{line.strip()}"
-        for line in playlist_text.splitlines()
-        if line.endswith(".ts")
-    ]
-
-    os.makedirs("ts_temp", exist_ok=True)
-
-    # Download a single segment
-    def fetch(seg_url):
-        name = seg_url.split("/")[-1]
-        data = requests.get(seg_url).content
-        with open(f"ts_temp/{name}", "wb") as f:
-            f.write(data)
-        return name
-
-    # Download all segments in 32 threads
-    with concurrent.futures.ThreadPoolExecutor(max_workers=32) as ex:
-        list(ex.map(fetch, segments))
-
-    # Merge segments
-    with open(output_name, "wb") as v:
-        for seg in segments:
-            name = seg.split("/")[-1]
-            with open(f"ts_temp/{name}", "rb") as f:
-                v.write(f.read())
-
-    return output_name
 
 # Force Subscribe Check Function
 async def is_subscribed(bot, user_id):
@@ -322,6 +283,38 @@ async def upload(bot: Client, m: Message):
                 name = f'{str(count).zfill(3)}) {name1}'
 
                 # Determine download strategy
+                if "youtu" in url:
+                    ytf = f"b[height<={raw_text2}][ext=mp4]/bv[height<={raw_text2}][ext=mp4]+ba[ext=m4a]/b[ext=mp4]"
+
+                    
+                    cmd = (
+                            f'yt-dlp '
+                            f'--downloader ffmpeg '
+                            f'--concurrent-fragments 16 '
+                            f'--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" '
+                            f'--add-header "Accept-Language: en-US,en;q=0.9" '
+                            f'--add-header "Connection: keep-alive" '
+                            f'-f "best" "{url}" '
+                            f'-o "{name}.%(ext)s"'
+                        )
+
+
+                elif url.endswith('.pdf'):
+                    cmd = f'yt-dlp -o "{name}.pdf" "{url}"'
+                else:
+                    
+                    cmd = (
+                            f'yt-dlp '
+                            f'--downloader ffmpeg '
+                            f'--concurrent-fragments 16 '
+                            f'--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" '
+                            f'--add-header "Accept-Language: en-US,en;q=0.9" '
+                            f'--add-header "Connection: keep-alive" '
+                            f'-f "best" "{url}" '
+                            f'-o "{name}.%(ext)s"'
+                        )
+
+
                 cc = f'**📹 Video #{str(count).zfill(3)}**\n**📁 Title:** {name1}\n**📦 Batch:** {raw_text0}\n{MR}'
                 cc1 = f'**📄 Document #{str(count).zfill(3)}**\n**📁 Title:** {name1}\n**📦 Batch:** {raw_text0}\n{MR}'
                 
@@ -332,22 +325,6 @@ async def upload(bot: Client, m: Message):
                     f"🔗 **URL:** `{url[:50]}...`\n"
                     f"📊 **Progress:** {count}/{len(links)}"
                 )
-
-                if "youtu" in url:
-                    ytf = f"b[height<={raw_text2}][ext=mp4]/bv[height<={raw_text2}][ext=mp4]+ba[ext=m4a]/b[ext=mp4]"
-                    cmd = f'yt-dlp -f "{ytf}" "{url}" -o "{name}.%(ext)s"'
-                elif url.endswith('.pdf'):
-                    cmd = f'yt-dlp -o "{name}.pdf" "{url}"'
-                elif url.endswith(".m3u8"):
-                    # Use high-speed parallel downloader
-                    filename = await fast_m3u8_download(url, f"{name}.mp4")
-                    await helper.send_vid(bot, m, cc, filename, thumb, name, prog)
-                    successful_downloads += 1
-                    continue
-                else:
-                    cmd = f'yt-dlp -f "best" "{url}" -o "{name}.%(ext)s"'                       
-
-                
                 
                 try:
                     if "drive.google.com" in url:
