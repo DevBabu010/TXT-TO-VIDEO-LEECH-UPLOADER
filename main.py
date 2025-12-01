@@ -284,7 +284,7 @@ async def upload(bot: Client, m: Message):
 
                 # Determine download strategy
                 if "youtu" in url:
-                    ytf = 'bv*[height<=720][ext=mp4]+ba[ext=m4a]/b[height<=720][ext=mp4]'
+                    ytf = 'bv*[height<={raw_text2}][ext=mp4]+ba[ext=m4a]/b[height<={raw_text2}][ext=mp4]'
                     
                     
                     cmd = (
