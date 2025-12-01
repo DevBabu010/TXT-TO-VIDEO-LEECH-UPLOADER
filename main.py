@@ -306,7 +306,7 @@ async def upload(bot: Client, m: Message):
                     cmd = (
                             f'yt-dlp '
                             f'--downloader ffmpeg '
-                            f'--concurrent-fragments 16 '
+                            f'--concurrent-fragments 8 '
                             f'--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" '
                             f'--add-header "Accept-Language: en-US,en;q=0.9" '
                             f'--add-header "Connection: keep-alive" '
