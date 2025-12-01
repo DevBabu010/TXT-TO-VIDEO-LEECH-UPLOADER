@@ -212,7 +212,7 @@ async def upload(bot: Client, m: Message):
     raw_text0 = input1.text
     await input1.delete(True)
     
-    await editable.edit("🎬 **Select video quality:**\n\n144, 240, 360, 480, 720, 1080")
+    await editable.edit("🎬 **Select video quality:**\n\n360, 480, 720, 1080, 4k")
     input2: Message = await bot.listen(editable.chat.id)
     raw_text2 = input2.text
     await input2.delete(True)
@@ -290,11 +290,11 @@ async def upload(bot: Client, m: Message):
                     cmd = (
                             f'yt-dlp '
                             f'--downloader ffmpeg '
-                            f'--concurrent-fragments 16 '
+                            f'--concurrent-fragments 8 '
                             f'--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" '
                             f'--add-header "Accept-Language: en-US,en;q=0.9" '
                             f'--add-header "Connection: keep-alive" '
-                            f'-f "best" "{url}" '
+                            f'-f "{ytf}" "{url}" '
                             f'-o "{name}.%(ext)s"'
                         )
 
@@ -310,7 +310,7 @@ async def upload(bot: Client, m: Message):
                             f'--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" '
                             f'--add-header "Accept-Language: en-US,en;q=0.9" '
                             f'--add-header "Connection: keep-alive" '
-                            f'-f "best" "{url}" '
+                            f'-f "bestvideo[height<={raw_text2}]+bestaudio/best[height<={raw_text2}]" "{url}" '
                             f'-o "{name}.%(ext)s"'
                         )
 
