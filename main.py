@@ -284,18 +284,23 @@ async def upload(bot: Client, m: Message):
 
                 # Determine download strategy
                 if "youtu" in url:
-                    ytf = f"b[height<={raw_text2}][ext=mp4]/bv[height<={raw_text2}][ext=mp4]+ba[ext=m4a]/b[ext=mp4]"
-
+                    ytf = 'bv*[height<=720][ext=mp4]+ba[ext=m4a]/b[height<=720][ext=mp4]'
+                    
                     
                     cmd = (
-                            f'yt-dlp '
-                            f'--downloader ffmpeg '
-                            f'--concurrent-fragments 8 '
-                            f'--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" '
-                            f'--add-header "Accept-Language: en-US,en;q=0.9" '
-                            f'--add-header "Connection: keep-alive" '
-                            f'-f "{ytf}" "{url}" '
-                            f'-o "{name}.%(ext)s"'
+                            
+                     f'yt-dlp '
+    f'--force-ipv4 '
+    f'--retries infinite '
+    f'--http-chunk-size 10M '
+    f'--downloader ffmpeg '
+    f'--concurrent-fragments 20 '
+    f'--cookies-from-browser chrome '
+    f'--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" '
+    f'-f "{ytf}" "{url}" '
+    f'-o "{name}.%(ext)s"'
+)
+    
                         )
 
 
@@ -306,7 +311,7 @@ async def upload(bot: Client, m: Message):
                     cmd = (
                             f'yt-dlp '
                             f'--downloader ffmpeg '
-                            f'--concurrent-fragments 8 '
+                            f'--concurrent-fragments 32 '
                             f'--user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" '
                             f'--add-header "Accept-Language: en-US,en;q=0.9" '
                             f'--add-header "Connection: keep-alive" '
